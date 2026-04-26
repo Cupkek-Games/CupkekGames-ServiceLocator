@@ -1,0 +1,6 @@
+{
+	"name": "CupkekGames.Systems.ServiceLocator",
+	"references": [
+		"GUID:38afbb2359e489e4fa79dc88f61428b5"
+	]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "com.cupkekgames.servicelocator",
+  "displayName": "CupkekGames ServiceLocator",
+  "version": "0.1.0",
+  "author": {
+    "name": "CupkekGames",
+    "url": "https://www.docs.cupkek.games"
+  },
+  "unity": "6000.0",
+  "documentationUrl": "https://docs.cupkek.games/",
+  "description": "Lightweight service-locator pattern for CupkekGames packages. ServiceRegistry + ServiceProvider + ScriptableObject-driven service registration. Used by GameSave, Inventory, RPGStats, Sequencer, Settings.",
+  "keywords": [
+    "Service Locator",
+    "DI",
+    "Registry",
+    "CupkekGames"
+  ],
+  "dependencies": {
+    "com.cupkekgames.core": "0.1.0"
+  }
+}
