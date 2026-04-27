@@ -89,7 +89,7 @@ namespace CupkekGames.Systems.Editor
       root.AddToClassList("sl-root");
 
       StyleSheet paletteUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
-        "Packages/com.cupkekgames.luna/Editor/EditorColorPalette.uss");
+        "Packages/com.cupkekgames.core/Editor/EditorColorPalette.uss");
       StyleSheet windowUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
         "Packages/com.cupkekgames.data/ServiceLocator/Editor/ServiceLocatorDebugWindow.uss");
       if (paletteUss != null)
