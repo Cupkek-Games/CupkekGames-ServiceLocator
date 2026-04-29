@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   /// <summary>
   /// Registers a <see cref="ScriptableObject"/> instance under a chosen service type

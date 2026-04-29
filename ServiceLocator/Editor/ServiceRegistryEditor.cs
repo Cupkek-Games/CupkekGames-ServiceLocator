@@ -1,9 +1,9 @@
+using CupkekGames.EditorUI;
 using UnityEditor;
 using UnityEditor.UIElements;
-using CupkekGames.Core.Editor;
 using UnityEngine.UIElements;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   [CustomEditor(typeof(ServiceRegistry))]
   public class ServiceRegistryEditor : UnityEditor.Editor

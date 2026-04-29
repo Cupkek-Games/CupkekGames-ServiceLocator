@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   public abstract class ServiceProvider : MonoBehaviour, IServiceProvider
   {

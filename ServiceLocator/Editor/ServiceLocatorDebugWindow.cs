@@ -1,15 +1,16 @@
+using CupkekGames.EditorUI;
+using CupkekGames.AssetFinder;
+using CupkekGames.AssetFinder.Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CupkekGames.Systems;
-using CupkekGames.Core;
-using CupkekGames.Core.Editor;
+using CupkekGames.Services;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   public class ServiceLocatorDebugWindow : EditorWindow
   {
@@ -89,7 +90,7 @@ namespace CupkekGames.Systems.Editor
       root.AddToClassList("sl-root");
 
       StyleSheet paletteUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
-        "Packages/com.cupkekgames.core/Editor/EditorColorPalette.uss");
+        "Packages/com.cupkekgames.editorui/Editor/EditorColorPalette.uss");
       StyleSheet windowUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
         "Packages/com.cupkekgames.data/ServiceLocator/Editor/ServiceLocatorDebugWindow.uss");
       if (paletteUss != null)
@@ -598,7 +599,7 @@ namespace CupkekGames.Systems.Editor
       {
         if (_registryFilterToolbar == null)
           return;
-        list = AssetFinder.FindAssets<ServiceRegistrySO>(_registryFilterToolbar.GetFiltersCopy());
+        list = CupkekGames.AssetFinder.Editor.AssetFinder.FindAssets<ServiceRegistrySO>(_registryFilterToolbar.GetFiltersCopy());
       }
       else
       {

@@ -1,11 +1,11 @@
+using CupkekGames.AssetFinder;
+using CupkekGames.AssetFinder.Editor;
 using System.Collections.Generic;
-using CupkekGames.Core;
-using CupkekGames.Core.Editor;
-using CupkekGames.Systems;
+using CupkekGames.Services;
 using UnityEditor;
 using UnityEngine;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   /// <summary>
   /// Centralizes editor-time <see cref="ServiceRegistrySO"/> bootstrap: unregister-then-register,
@@ -13,7 +13,7 @@ namespace CupkekGames.Systems.Editor
   /// </summary>
   public static class ServiceRegistryEditorBootstrap
   {
-    public const string AutoRegisterOnEditorLoadKey = "CupkekGames.Systems.ServiceLocator.AutoRegisterOnEditorLoad";
+    public const string AutoRegisterOnEditorLoadKey = "CupkekGames.Services.AutoRegisterOnEditorLoad";
 
     public static bool AutoRegisterOnEditorLoad
     {
@@ -56,7 +56,7 @@ namespace CupkekGames.Systems.Editor
 
     public static void RetriggerEditorRegistrationsFiltered(List<AssetFinderFilterConfig> filters)
     {
-      List<ServiceRegistrySO> list = AssetFinder.FindAssets<ServiceRegistrySO>(filters ?? new List<AssetFinderFilterConfig>());
+      List<ServiceRegistrySO> list = CupkekGames.AssetFinder.Editor.AssetFinder.FindAssets<ServiceRegistrySO>(filters ?? new List<AssetFinderFilterConfig>());
       RetriggerEditorRegistrations(list);
     }
 

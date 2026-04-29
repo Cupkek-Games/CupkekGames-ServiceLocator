@@ -1,11 +1,12 @@
 {
-    "name": "CupkekGames.Systems.ServiceLocator.Editor",
+    "name": "CupkekGames.Services.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:38afbb2359e489e4fa79dc88f61428b5",
-        "GUID:ab7612e7fe1d7e64ab54a584495caa06",
         "GUID:c95c4fa533d6fdb47871e2223c77f6d0",
-        "GUID:a57eb40d9a9e0984a816dda1fdae8adf"
+        "GUID:a57eb40d9a9e0984a816dda1fdae8adf",
+        "GUID:b89700823dd24fd4bb5d626de398c8e9",
+        "GUID:a2fdbaa9ab154c73b7f8f294aead7a34",
+        "GUID:8f77594f32d14e40b107e8394633124d"
     ],
     "includePlatforms": [
         "Editor"

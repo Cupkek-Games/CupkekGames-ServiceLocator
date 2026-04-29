@@ -1,5 +1,5 @@
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   public interface IServiceProvider
   {

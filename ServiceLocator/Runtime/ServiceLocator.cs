@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   public class ServiceLocator : MonoBehaviour
   {

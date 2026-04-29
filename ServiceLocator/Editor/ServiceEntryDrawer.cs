@@ -1,13 +1,13 @@
+using CupkekGames.EditorUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CupkekGames.Core.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   /// <summary>
   /// UI Toolkit property drawer for <see cref="ServiceEntry"/> — single-row layout (asset + register-as type).

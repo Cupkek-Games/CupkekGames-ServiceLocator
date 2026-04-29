@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   /// <summary>
   /// Human-readable <see cref="Type"/> names for the Service Locator debug window (e.g. <c>IAssetCatalog&lt;Sprite&gt;</c> instead of <c>IAssetCatalog`1</c>).

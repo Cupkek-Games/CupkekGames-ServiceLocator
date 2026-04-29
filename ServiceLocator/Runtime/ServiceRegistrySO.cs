@@ -1,9 +1,9 @@
+using CupkekGames.EditorInspector;
 using System;
 using System.Collections.Generic;
-using CupkekGames.Core;
 using UnityEngine;
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   [CreateAssetMenu(menuName = "CupkekGames/ServiceLocator/Service Registry")]
   public class ServiceRegistrySO : ScriptableObject

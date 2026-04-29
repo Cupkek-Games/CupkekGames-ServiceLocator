@@ -1,9 +1,9 @@
+using CupkekGames.EditorInspector;
 using System;
 using System.Collections.Generic;
-using CupkekGames.Core;
 using UnityEngine;
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   /// <summary>
   /// MonoBehaviour registry that centralizes service registration.

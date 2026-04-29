@@ -1,6 +1,6 @@
 using System;
 
-namespace CupkekGames.Systems
+namespace CupkekGames.Services
 {
   public class ServiceDescriptor
   {

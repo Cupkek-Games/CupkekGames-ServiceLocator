@@ -1,12 +1,14 @@
+using CupkekGames.EditorUI;
+using CupkekGames.AssetFinder;
+using CupkekGames.AssetFinder.Editor;
 using System.Collections.Generic;
-using CupkekGames.Core.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-namespace CupkekGames.Systems.Editor
+namespace CupkekGames.Services.Editor
 {
   [CustomEditor(typeof(ServiceRegistrySO))]
   [InitializeOnLoad]
