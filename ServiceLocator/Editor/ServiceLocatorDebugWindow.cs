@@ -71,7 +71,8 @@ namespace CupkekGames.Services.Editor
     private static readonly Color FoldoutHeaderBg = new(0, 0, 0, 0.06f);
     private static readonly Color NsHeaderBg = new(0, 0, 0, 0.04f);
 
-    [MenuItem("Tools/CupkekGames/Service Locator Debug")]
+    // Priority 400 — group 5: debug + dev utilities (inspect runtime service registrations).
+    [MenuItem("Tools/CupkekGames/Service Locator Debug", false, 400)]
     public static void ShowWindow()
     {
       var window = GetWindow<ServiceLocatorDebugWindow>("Service Locator");
