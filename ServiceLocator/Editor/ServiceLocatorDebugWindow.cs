@@ -242,7 +242,6 @@ namespace CupkekGames.Services.Editor
       _mainHost.style.flexGrow = 1;
       _mainHost.style.minHeight = 0;
       _mainHost.style.position = Position.Relative;
-      _mainHost.RegisterCallback<GeometryChangedEvent>(_ => UpdateRegistryPanelLayout());
       root.Add(_mainHost);
 
       // ── Outer split: types | (middle + inspector) ──
@@ -320,10 +319,13 @@ namespace CupkekGames.Services.Editor
       _inspectorPanel.style.overflow = Overflow.Hidden;
       _inspectorColumn.Add(_inspectorPanel);
 
-      // ── Registry tools: full-cover modal overlay with backdrop ──
-      // Backdrop is full-cover, dimmed, and dismisses the modal on click.
-      // The card lives inside a centered stage; the card stops click propagation
-      // so clicks inside it don't trigger the backdrop dismiss.
+      // ── Registry tools: full-window modal overlay with backdrop ──
+      // Parented to the window root (not _mainHost) so the backdrop covers
+      // the toolbar + summary strip too — anything less makes the modal
+      // feel half-applied. The card lives centered inside; clicks on the
+      // backdrop itself dismiss, clicks inside the card don't.
+      // Window root is the positioning context (its default position is
+      // Relative which is fine for our Absolute children).
       _registryOverlayRoot = new VisualElement();
       _registryOverlayRoot.AddToClassList("sl-registry-overlay");
       _registryOverlayRoot.style.display = DisplayStyle.None;
@@ -341,7 +343,7 @@ namespace CupkekGames.Services.Editor
         if (evt.target == _registryOverlayRoot)
           SetRegistryPanelOpen(false);
       });
-      _mainHost.Add(_registryOverlayRoot);
+      root.Add(_registryOverlayRoot);
 
       _registryCard = new VisualElement();
       _registryCard.AddToClassList("sl-registry-card");
