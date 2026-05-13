@@ -53,6 +53,8 @@ namespace CupkekGames.Services.Editor
     private Toggle _autoRegisterToggle;
     private VisualElement _mainHost;
     private VisualElement _registryOverlayRoot;
+    private VisualElement _registryCard;
+    private Label _registryStatusLabel;
     private Button _registryToolsButton;
     private bool _registryPanelOpen;
 
@@ -93,7 +95,7 @@ namespace CupkekGames.Services.Editor
       StyleSheet paletteUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
         "Packages/com.cupkekgames.editorui/Editor/EditorColorPalette.uss");
       StyleSheet windowUss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
-        "Packages/com.cupkekgames.data/ServiceLocator/Editor/ServiceLocatorDebugWindow.uss");
+        "Packages/com.cupkekgames.services/ServiceLocator/Editor/ServiceLocatorDebugWindow.uss");
       if (paletteUss != null)
         root.styleSheets.Add(paletteUss);
       if (windowUss != null)
@@ -207,6 +209,7 @@ namespace CupkekGames.Services.Editor
       _autoRegisterToggle.RegisterValueChangedCallback(evt =>
       {
         ServiceRegistryEditorBootstrap.AutoRegisterOnEditorLoad = evt.newValue;
+        UpdateRegistryStatusLabel();
       });
       toolbar.Add(_autoRegisterToggle);
 
@@ -317,30 +320,46 @@ namespace CupkekGames.Services.Editor
       _inspectorPanel.style.overflow = Overflow.Hidden;
       _inspectorColumn.Add(_inspectorPanel);
 
-      // ── Registry tools: overlay on main split (no layout height when closed) ──
+      // ── Registry tools: full-cover modal overlay with backdrop ──
+      // Backdrop is full-cover, dimmed, and dismisses the modal on click.
+      // The card lives inside a centered stage; the card stops click propagation
+      // so clicks inside it don't trigger the backdrop dismiss.
       _registryOverlayRoot = new VisualElement();
       _registryOverlayRoot.AddToClassList("sl-registry-overlay");
       _registryOverlayRoot.style.display = DisplayStyle.None;
       _registryOverlayRoot.style.position = Position.Absolute;
-      _registryOverlayRoot.style.left = 8;
-      _registryOverlayRoot.style.right = 8;
-      _registryOverlayRoot.style.top = 8;
-      _registryOverlayRoot.style.flexDirection = FlexDirection.Column;
+      _registryOverlayRoot.style.left = 0;
+      _registryOverlayRoot.style.right = 0;
+      _registryOverlayRoot.style.top = 0;
+      _registryOverlayRoot.style.bottom = 0;
+      _registryOverlayRoot.style.alignItems = Align.Center;
+      _registryOverlayRoot.style.justifyContent = Justify.Center;
+      _registryOverlayRoot.RegisterCallback<ClickEvent>(evt =>
+      {
+        // Only the backdrop (overlay root itself) dismisses — clicks bubbling
+        // up from descendants are ignored.
+        if (evt.target == _registryOverlayRoot)
+          SetRegistryPanelOpen(false);
+      });
       _mainHost.Add(_registryOverlayRoot);
 
-      var registryChrome = new VisualElement();
-      registryChrome.style.flexDirection = FlexDirection.Column;
-      registryChrome.style.flexGrow = 1;
-      registryChrome.style.minHeight = 0;
-      _registryOverlayRoot.Add(registryChrome);
-
-      var registryCard = new VisualElement();
-      registryCard.AddToClassList("sl-registry-card");
-      registryCard.style.flexDirection = FlexDirection.Column;
-      registryCard.style.flexGrow = 1;
-      registryCard.style.minHeight = 0;
-      registryCard.style.overflow = Overflow.Hidden;
-      registryChrome.Add(registryCard);
+      _registryCard = new VisualElement();
+      _registryCard.AddToClassList("sl-registry-card");
+      _registryCard.style.flexDirection = FlexDirection.Column;
+      _registryCard.style.minHeight = 0;
+      _registryCard.style.overflow = Overflow.Hidden;
+      _registryCard.focusable = true;
+      _registryCard.pickingMode = PickingMode.Position;
+      _registryCard.RegisterCallback<KeyDownEvent>(evt =>
+      {
+        if (evt.keyCode == KeyCode.Escape)
+        {
+          SetRegistryPanelOpen(false);
+          evt.StopPropagation();
+        }
+      });
+      _registryOverlayRoot.Add(_registryCard);
+      var registryCard = _registryCard;
 
       var registryHeader = new VisualElement();
       registryHeader.AddToClassList("sl-registry-card-header");
@@ -372,7 +391,13 @@ namespace CupkekGames.Services.Editor
       bootstrap.style.flexDirection = FlexDirection.Column;
       registryScroll.Add(bootstrap);
 
-      var sectionEditor = new Label("Filtered actions");
+      // Status line — surfaces editor-time registration state at a glance so
+      // users don't have to dig through registry assets to see what's live.
+      _registryStatusLabel = new Label();
+      _registryStatusLabel.AddToClassList("sl-registry-status");
+      bootstrap.Add(_registryStatusLabel);
+
+      var sectionEditor = new Label("Retrigger");
       sectionEditor.AddToClassList("sl-registry-section-title");
       bootstrap.Add(sectionEditor);
 
@@ -382,9 +407,22 @@ namespace CupkekGames.Services.Editor
       bootRow.style.alignItems = Align.Center;
       bootRow.style.marginBottom = 6;
 
-      var retriggerFiltered = new Button(RetriggerEditorRegistrationsFiltered) { text = "Retrigger (filtered)" };
+      var retriggerAll = new Button(() =>
+      {
+        ServiceRegistryEditorBootstrap.RetriggerEditorRegistrationsAll();
+        UpdateRegistryStatusLabel();
+      }) { text = "Retrigger (all)" };
+      retriggerAll.tooltip =
+        "For every ServiceRegistrySO asset in the project: UnregisterAll, then RegisterAll if Register In Editor is checked.";
+      bootRow.Add(retriggerAll);
+
+      var retriggerFiltered = new Button(() =>
+      {
+        RetriggerEditorRegistrationsFiltered();
+        UpdateRegistryStatusLabel();
+      }) { text = "Retrigger (filtered)" };
       retriggerFiltered.tooltip =
-        "For each ServiceRegistrySO matching the filters below: UnregisterAll, then RegisterAll if Register In Editor is checked. Use the toolbar for retrigger on all assets.";
+        "For each ServiceRegistrySO matching the filters below: UnregisterAll, then RegisterAll if Register In Editor is checked.";
       bootRow.Add(retriggerFiltered);
 
       bootstrap.Add(bootRow);
@@ -421,13 +459,13 @@ namespace CupkekGames.Services.Editor
       bulkRow.style.flexWrap = Wrap.Wrap;
       bulkRow.style.alignItems = Align.Center;
 
-      var tickFiltered = new Button(() => BulkSetRegisterInEditor(true, true)) { text = "Tick (filtered)" };
+      var tickFiltered = new Button(() => { BulkSetRegisterInEditor(true, true); UpdateRegistryStatusLabel(); }) { text = "Tick (filtered)" };
       tickFiltered.tooltip = "Set Register In Editor on registries matching filters.";
-      var tickAll = new Button(() => BulkSetRegisterInEditor(true, false)) { text = "Tick (all)" };
+      var tickAll = new Button(() => { BulkSetRegisterInEditor(true, false); UpdateRegistryStatusLabel(); }) { text = "Tick (all)" };
       tickAll.tooltip = "Set Register In Editor on every ServiceRegistrySO.";
-      var untickFiltered = new Button(() => BulkSetRegisterInEditor(false, true)) { text = "Untick (filtered)" };
+      var untickFiltered = new Button(() => { BulkSetRegisterInEditor(false, true); UpdateRegistryStatusLabel(); }) { text = "Untick (filtered)" };
       untickFiltered.tooltip = "Clear Register In Editor and UnregisterAll on matching registries.";
-      var untickAll = new Button(() => BulkSetRegisterInEditor(false, false)) { text = "Untick (all)" };
+      var untickAll = new Button(() => { BulkSetRegisterInEditor(false, false); UpdateRegistryStatusLabel(); }) { text = "Untick (all)" };
       untickAll.tooltip = "Clear Register In Editor on every ServiceRegistrySO; UnregisterAll each.";
 
       bulkRow.Add(tickFiltered);
@@ -454,24 +492,26 @@ namespace CupkekGames.Services.Editor
       if (_registryOverlayRoot != null)
         _registryOverlayRoot.style.display = open ? DisplayStyle.Flex : DisplayStyle.None;
       UpdateRegistryToolsButtonLabel();
-      UpdateRegistryPanelLayout();
       if (open)
-        EditorApplication.delayCall += () =>
-        {
-          if (_registryPanelOpen)
-            UpdateRegistryPanelLayout();
-        };
+      {
+        UpdateRegistryStatusLabel();
+        // Focus the card so its KeyDown handler (Escape → close) catches keys
+        // without the user clicking inside first.
+        EditorApplication.delayCall += () => _registryCard?.Focus();
+      }
     }
 
-    private void UpdateRegistryPanelLayout()
+    private void UpdateRegistryStatusLabel()
     {
-      if (_mainHost == null || _registryOverlayRoot == null || !_registryPanelOpen)
+      if (_registryStatusLabel == null)
         return;
-      float h = _mainHost.layout.height;
-      if (h < 2f)
-        return;
-      float panelH = Mathf.Clamp(h * 0.7f, 200f, 560f);
-      _registryOverlayRoot.style.height = panelH;
+      List<ServiceRegistrySO> all = ServiceRegistryEditorBootstrap.FindAllServiceRegistryAssets();
+      int total = all.Count;
+      int registered = 0;
+      for (int i = 0; i < total; i++)
+        if (all[i] != null && all[i].RegisterInEditor) registered++;
+      bool auto = ServiceRegistryEditorBootstrap.AutoRegisterOnEditorLoad;
+      _registryStatusLabel.text = $"Auto-register on load: {(auto ? "ON" : "off")}   •   Register In Editor: {registered} / {total} registries";
     }
 
     private void CopySelectedTypeName()

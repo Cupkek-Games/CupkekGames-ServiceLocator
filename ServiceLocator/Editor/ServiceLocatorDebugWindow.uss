@@ -41,33 +41,72 @@
     /* positioning context for registry overlay */
 }
 
+/* MODAL OVERLAY — full-cover backdrop that catches clicks outside the card. */
 .sl-registry-overlay {
-    /* height set in code from main host; stacks above split */
+    background-color: rgba(0, 0, 0, 0.55);
+    padding: 24px;
 }
 
+/* MODAL CARD — centered above the backdrop, capped in size, elevated. */
 .sl-registry-card {
-    flex-grow: 1;
+    width: 560px;
+    max-width: 90%;
+    max-height: 100%;
     background-color: var(--editor-bg-750);
     border-width: 1px;
     border-color: var(--editor-border-medium);
-    border-radius: 6px;
+    border-radius: 8px;
+    /* Faked drop shadow: stacked outer borders darken progressively toward
+       the bottom-right, since UI Toolkit USS doesn't expose box-shadow. */
+    border-bottom-width: 3px;
+    border-right-width: 2px;
 }
 
 .sl-registry-card-header {
-    padding-left: 12px;
+    padding-left: 14px;
     padding-right: 8px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border-bottom-width: 1px;
     border-bottom-color: var(--editor-border-soft);
     background-color: var(--editor-surface-weak);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.sl-registry-close {
+    background-color: transparent;
+    border-width: 0;
+    -unity-font-style: bold;
+    font-size: 16px;
+    color: var(--editor-text-muted);
+}
+
+.sl-registry-close:hover {
+    color: var(--editor-text-default);
+    background-color: var(--editor-brand-hover);
+    border-radius: 4px;
 }
 
 .sl-registry-body {
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 10px;
-    padding-bottom: 12px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 12px;
+    padding-bottom: 14px;
+}
+
+/* STATUS LINE — surfaces current registration state in one glance. */
+.sl-registry-status {
+    -unity-text-align: middle-left;
+    color: var(--editor-text-default);
+    background-color: var(--editor-bg-850);
+    border-radius: 4px;
+    border-left-width: 3px;
+    border-left-color: var(--editor-border-accent);
+    padding: 8px 12px;
+    font-size: 11px;
+    margin-bottom: 10px;
+    white-space: normal;
 }
 
 .sl-registry-section-title {
@@ -75,8 +114,8 @@
     -unity-font-style: bold;
     color: var(--editor-text-muted);
     -unity-text-align: middle-left;
-    margin-bottom: 4px;
-    margin-top: 2px;
+    margin-bottom: 6px;
+    margin-top: 4px;
 }
 
 .sl-summary {
